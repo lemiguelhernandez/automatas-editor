@@ -1,0 +1,97 @@
+.app-loading {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.app-loading-content-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.app-loading p {
+  display: block;
+  font-size: 1.17em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: normal;
+}
+
+.app-loading-icon {
+  margin-top: 20%;
+  background: url('../icons/logo.png') no-repeat center center;
+  background-size: contain;
+  width: 100px;
+  height: 100px;
+  -webkit-animation: bounceIn 2s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: bounceIn 2s; /* Firefox < 16 */
+  -ms-animation: bounceIn 2s; /* Internet Explorer */
+  -o-animation: bounceIn 2s; /* Opera < 12.1 */
+  animation: bounceIn 2s;
+}
+
+.loader {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #2C2420; /* Default color */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+}
+
+button > .loader {
+  display: inline-block;
+  position: absolute;
+  margin-top: 3px;
+  margin-left: -4px;
+  background-color: #58e6c3;
+}
+
+@-moz-keyframes spin {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 1;
+    transform: scale(.3);
+  } 
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  } 
+
+  70% {
+    opacity: 1;
+    transform: scale(.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

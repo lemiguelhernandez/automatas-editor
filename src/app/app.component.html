@@ -1,0 +1,25 @@
+<!-- Toolbar -->
+<app-toolbar></app-toolbar>
+
+<div style="width: 100%; height: 100vh">
+    <as-split direction="vertical">
+        <as-split-area [size]="100">
+            <!-- Content editor -->
+            <div class="content" role="main">
+                <app-editor></app-editor>
+            </div>
+        </as-split-area>
+        <as-split-area [size]="0">
+            <div class="tabs-wrapper">
+                <p-tabView>
+                    <p-tabPanel header="Terminal">
+                        <app-terminal></app-terminal>
+                    </p-tabPanel>
+                    <p-tabPanel header="Logs">
+                        <app-log-monitor></app-log-monitor>
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+        </as-split-area>
+    </as-split>
+</div>
