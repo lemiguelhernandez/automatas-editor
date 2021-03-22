@@ -42,3 +42,31 @@ body, .p-component {
 .CodeMirror {
   height: 100%;
 }
+
+// icons
+.logo-img {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  vertical-align: middle;
+  background: url('./assets/icons/logo.png') no-repeat center center;
+  background-size: contain;
+}
+
+.compile-icon {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  vertical-align: middle;
+  background: url('./assets/icons/compile_icon.png') no-repeat center center;
+  background-size: contain;
+}
+
+.info-icon {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  vertical-align: middle;
+  background: url('./assets/icons/info.png') no-repeat center center;
+  background-size: contain;
+}
