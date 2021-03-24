@@ -1,13 +1,11 @@
 export const apply = (CodeMirror) => {
     CodeMirror.defineMode("custom", (config, parserConfig) => {
         var indentUnit = config.indentUnit;
-        var statementIndent = parserConfig.statementIndent;
         var jsonldMode = parserConfig.jsonld;
         var jsonMode = parserConfig.json || jsonldMode;
         var isTS = parserConfig.typescript;
-        var wordRE = parserConfig.wordCharacters || /[\w$\xa1-\uffff]/;
-
-        // Tokenizer
+        // Indentificar caracteres
+        var wordRE = parserConfig.wordCharacters || /\w+$/;
 
         var keywords = function () {
             function kw(type) { return { type: type, style: "keyword" }; }
@@ -28,26 +26,15 @@ export const apply = (CodeMirror) => {
                 "envia": method,
                 "recibe": method,
                 "entero": types("entero"),
-                "real": types("real")
+                "real": types("real"),
+                "cadena": types("cadena")
             };
         }();
 
-        var isOperatorChar = /[+\-*&%=<>!?|~^@]/;
+        // Por medio de esta expresión regular se identifican cuales son los operadores
+        var isOperatorChar = /[+\-*&%=<>|^]/;
 
-        function readRegexp(stream) {
-            var escaped = false, next, inSet = false;
-            while ((next = stream.next()) != null) {
-                if (!escaped) {
-                    if (next == "/" && !inSet) return;
-                    if (next == "[") inSet = true;
-                    else if (inSet && next == "]") inSet = false;
-                }
-                escaped = !escaped && next == "\\";
-            }
-        }
-
-        // Used as scratch variables to communicate multiple values without
-        // consing up tons of objects.
+        // Método encargado de analizar el contenido
         var type, content;
         function ret(tp, style, cont) {
             type = tp; content = cont;
@@ -58,68 +45,26 @@ export const apply = (CodeMirror) => {
             if (ch == '"' || ch == "'") {
                 state.tokenize = tokenString(ch);
                 return state.tokenize(stream, state);
-            } else if (ch == "." && stream.match(/^\d[\d_]*(?:[eE][+\-]?[\d_]+)?/)) {
+            } else if (ch == "." && stream.match(/^\d+/)) { // Punto Decimal
                 return ret("number", "number");
-            } else if (ch == "." && stream.match("..")) {
-                return ret("spread", "meta");
-            } else if (/[\[\]{}\(\),;\:\.]/.test(ch)) {
-                return ret(ch);
-            } else if (ch == "=" && stream.eat(">")) {
-                return ret("=>", "operator");
-            } else if (ch == "0" && stream.match(/^(?:x[\dA-Fa-f_]+|o[0-7_]+|b[01_]+)n?/)) {
+            } else if (/\d/.test(ch)) { // Numero
                 return ret("number", "number");
-            } else if (/\d/.test(ch)) {
-                stream.match(/^[\d_]*(?:n|(?:\.[\d_]*)?(?:[eE][+\-]?[\d_]+)?)?/);
-                return ret("number", "number");
-            } else if (ch == "/") {
-                if (stream.eat("*")) {
-                    state.tokenize = tokenComment;
-                    return tokenComment(stream, state);
-                } else if (stream.eat("/")) {
-                    stream.skipToEnd();
-                    return ret("comment", "comment");
-                } else if (expressionAllowed(stream, state, 1)) {
-                    readRegexp(stream);
-                    stream.match(/^\b(([gimyus])(?![gimyus]*\2))+\b/);
-                    return ret("regexp", "string-2");
-                } else {
-                    stream.eat("=");
-                    return ret("operator", "operator", stream.current());
-                }
             } else if (ch == "`") {
                 state.tokenize = tokenQuasi;
                 return tokenQuasi(stream, state);
-            } else if (ch == "#" && stream.peek() == "!") {
-                stream.skipToEnd();
-                return ret("meta", "meta");
-            } else if (ch == "#") {
-                stream.skipToEnd();
+            } else if (ch == "#" || ch == "/") { // Comentario
+                stream.skipToEnd(); // Indica hasta el final
                 return ret("comment", "comment")
-            } else if (ch == "<" && stream.match("!--") ||
-                (ch == "-" && stream.match("->") && !/\S/.test(stream.string.slice(0, stream.start)))) {
-                stream.skipToEnd()
-                return ret("comment", "comment")
-            } else if (isOperatorChar.test(ch)) {
-                if (ch != ">" || !state.lexical || state.lexical.type != ">") {
-                    if (stream.eat("=")) {
-                        if (ch == "!" || ch == "=") stream.eat("=")
-                    } else if (/[<>*+\-|&?]/.test(ch)) {
-                        stream.eat(ch)
-                        if (ch == ">") stream.eat(ch)
-                    }
-                }
-                if (ch == "?" && stream.eat(".")) return ret(".")
+            } else if (isOperatorChar.test(ch)) { // Operadores
                 return ret("operator", "operator", stream.current());
-            } else if (wordRE.test(ch)) {
+            } else if (wordRE.test(ch)) { // Letras
                 stream.eatWhile(wordRE);
                 var word = stream.current()
                 if (state.lastType != ".") {
-                    if (keywords.propertyIsEnumerable(word)) {
+                    if (keywords.propertyIsEnumerable(word)) { // Palabras reservadas
                         var kw = keywords[word]
                         return ret(kw.type, kw.style, word)
                     }
-                    if (word == "async" && stream.match(/^(\s|\/\*([^*]|\*(?!\/))*?\*\/)*[\[\(\w]/, false))
-                        return ret("async", "keyword", word)
                 }
                 return ret("variable", "variable", word)
             }
@@ -162,13 +107,7 @@ export const apply = (CodeMirror) => {
         }
 
         var brackets = "([{}])";
-        // This is a crude lookahead trick to try and notice that we're
-        // parsing the argument patterns for a fat-arrow function before we
-        // actually hit the arrow token. It only works if the arrow is on
-        // the same line as the arguments and there's no strange noise
-        // (comments) in between. Fallback is to only notice when we hit the
-        // arrow, and not declare the arguments as locals for the arrow
-        // body.
+
         function findFatArrow(stream, state) {
             if (state.fatArrowAt) state.fatArrowAt = null;
             var arrow = stream.string.indexOf("=>", stream.start);
@@ -821,20 +760,6 @@ export const apply = (CodeMirror) => {
             return pass(pattern, maybeAssign);
         }
 
-        function isContinuedStatement(state, textAfter) {
-            return state.lastType == "operator" || state.lastType == "," ||
-                isOperatorChar.test(textAfter.charAt(0)) ||
-                /[,.]/.test(textAfter.charAt(0));
-        }
-
-        function expressionAllowed(stream, state, backUp) {
-            return state.tokenize == tokenBase &&
-                /^(?:operator|sof|keyword [bcd]|case|new|export|default|spread|[\[{}\(,;:]|=>)$/.test(state.lastType) ||
-                (state.lastType == "quasi" && /\{\s*$/.test(stream.string.slice(0, stream.pos - (backUp || 0))))
-        }
-
-        // Interface
-
         return {
             startState: function (basecolumn) {
                 var state = {
@@ -850,7 +775,6 @@ export const apply = (CodeMirror) => {
                     state.globalVars = parserConfig.globalVars;
                 return state;
             },
-
             token: function (stream, state) {
                 if (stream.sol()) {
                     if (!state.lexical.hasOwnProperty("align"))
@@ -864,53 +788,8 @@ export const apply = (CodeMirror) => {
                 state.lastType = type == "operator" && (content == "++" || content == "--") ? "incdec" : type;
                 return parseJS(state, style, type, content, stream);
             },
-
-            indent: function (state, textAfter) {
-                if (state.tokenize == tokenComment || state.tokenize == tokenQuasi) return CodeMirror.Pass;
-                if (state.tokenize != tokenBase) return 0;
-                var firstChar = textAfter && textAfter.charAt(0), lexical = state.lexical, top
-                // Kludge to prevent 'maybelse' from blocking lexical scope pops
-                if (!/^\s*else\b/.test(textAfter)) for (var i = state.cc.length - 1; i >= 0; --i) {
-                    var c = state.cc[i];
-                    if (c == poplex) lexical = lexical.prev;
-                    else if (c != maybeelse) break;
-                }
-                while ((lexical.type == "stat" || lexical.type == "form") &&
-                    (firstChar == "}" || ((top = state.cc[state.cc.length - 1]) &&
-                        (top == maybeoperatorComma || top == maybeoperatorNoComma) &&
-                        !/^[,\.=+\-*:?[\(]/.test(textAfter))))
-                    lexical = lexical.prev;
-                if (statementIndent && lexical.type == ")" && lexical.prev.type == "stat")
-                    lexical = lexical.prev;
-                var type = lexical.type, closing = firstChar == type;
-
-                if (type == "vardef") return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? lexical.info.length + 1 : 0);
-                else if (type == "form" && firstChar == "{") return lexical.indented;
-                else if (type == "form") return lexical.indented + indentUnit;
-                else if (type == "stat")
-                    return lexical.indented + (isContinuedStatement(state, textAfter) ? statementIndent || indentUnit : 0);
-                else if (lexical.info == "switch" && !closing && parserConfig.doubleIndentSwitch != false)
-                    return lexical.indented + (/^(?:case|default)\b/.test(textAfter) ? indentUnit : 2 * indentUnit);
-                else if (lexical.align) return lexical.column + (closing ? 0 : 1);
-                else return lexical.indented + (closing ? 0 : indentUnit);
-            },
-
-            electricInput: /^\s*(?:case .*?:|default:|\{|\})$/,
-            blockCommentStart: "/*",
-            blockCommentEnd: "*/",
-            blockCommentContinue: " * ",
             lineComment: "#",
-            fold: "brace",
-            closeBrackets: "()[]{}''\"\"``",
-            jsonldMode: jsonldMode,
-            jsonMode: jsonMode,
-
-            expressionAllowed: expressionAllowed,
-
-            skipExpression: function (state) {
-                var top = state.cc[state.cc.length - 1]
-                if (top == expression || top == expressionNoComma) state.cc.pop()
-            }
+            closeBrackets: "()[]{}''\"\"``"
         };
     });
 }

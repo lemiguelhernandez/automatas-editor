@@ -19,6 +19,20 @@ export class EditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.editor.writeValue(`Inicio\n\t# code here!\nFin`);
+    this.editor.writeValue(`Inicio
+    declare a,b1 entero;
+    declare x real;
+    declare i real;
+    recibe(x);
+    a = 5;
+    b = 2;
+    si x >= (b + c1) entonces
+      # a = a +1
+      envia ("HOLA MUNDO");
+    sino
+      envia ("ESTO ES UNA PRUEBA");
+    finsi;
+Fin`)
     applyCustomLanguage(this.editor.codeMirrorGlobal);
   }
 
