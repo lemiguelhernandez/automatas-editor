@@ -8,7 +8,7 @@ echo "Eliminar contenido docs"
 rm -rf docs/
 
 echo "Actualizar nuevo contenido"
-cp /dist/* /docs/
+cp ../dist/* ../docs/
 
 echo "git push"
 git add .
