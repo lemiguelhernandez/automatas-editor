@@ -80,7 +80,7 @@
   }
   
   .cm-s-material .cm-number {
-    color: #FF5370;
+    color: #C3E88D;
   }
   
   .cm-s-material .cm-def {
@@ -92,7 +92,7 @@
   }
   
   .cm-s-material .cm-string-2 {
-    color: #f07178;
+    color: #C3E88D;
   }
   
   .cm-s-material .cm-comment {
@@ -130,8 +130,25 @@
   
   
   .cm-s-material .cm-error {
-    color: rgba(255, 255, 255, 1.0);
-    background-color: #FF5370;
+    background-image:
+    linear-gradient(45deg, transparent 65%, #FF5370 80%, transparent 90%),
+    linear-gradient(135deg, transparent 5%, #FF5370 15%, transparent 25%),
+    linear-gradient(135deg, transparent 45%, #FF5370 55%, transparent 65%),
+    linear-gradient(45deg, transparent 25%, #FF5370 35%, transparent 50%);
+    background-repeat:repeat-x;
+    background-size: 8px 2px;
+    background-position:0 95%;
+  }
+
+  .cm-s-material .cm-warning {
+    background-image:
+    linear-gradient(45deg, transparent 65%, #ECD41E 80%, transparent 90%),
+    linear-gradient(135deg, transparent 5%, #ECD41E 15%, transparent 25%),
+    linear-gradient(135deg, transparent 45%, #ECD41E 55%, transparent 65%),
+    linear-gradient(45deg, transparent 25%, #ECD41E 35%, transparent 50%);
+    background-repeat:repeat-x;
+    background-size: 8px 2px;
+    background-position:0 95%;
   }
   
   .cm-s-material .CodeMirror-matchingbracket {

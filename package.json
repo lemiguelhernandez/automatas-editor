@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "add:component": "ng generate component xyz"
+    "add:component": "ng generate component xyz",
+    "publish": "cd sh && ./publish"
   },
   "private": true,
   "dependencies": {

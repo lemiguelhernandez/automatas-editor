@@ -5,12 +5,12 @@ echo "compile"
 # cd ../ && yarn build:prod
 
 echo "Eliminar contenido docs"
-rm -rf docs/
+# rm -rf docs/
 
 echo "Actualizar nuevo contenido"
-cp -rf ../dist/* ../docs/
+# cp -rf ../dist/* ../docs/
 
 echo "git push"
-git add .
+cd ../ && git add .
 git commit -m "automatizacion de publicación"
 git push
