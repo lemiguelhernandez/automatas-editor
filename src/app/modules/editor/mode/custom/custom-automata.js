@@ -56,12 +56,10 @@ export const apply = (CodeMirror) => {
                 return state.tokenize(stream, state);
             } else if (ch == "." && stream.match(/^[\d]+/)) { // Punto Decimal
                 return ret("number", "number");
-            } else if (/\d/.test(ch)) { // Numero \d es lo mismo que [0-9]
-                return ret("number", "number");
             } else if (ch == "#") { // Comentario
                 stream.skipToEnd(); // Indica hasta el final
                 return ret("comment", "comment")
-            } else if (/[+\-*&%=<>|^\/\(\)]/.test(ch)) { // Operadores
+            } else if (/[,;+\-*&%=<>|^\/\(\)]/.test(ch)) { // Operadores
                 return ret("operator", "operator", stream.current());
             } else if (wordRE.test(ch)) { // Letras
                 stream.eatWhile(wordRE);
@@ -71,7 +69,16 @@ export const apply = (CodeMirror) => {
                     return ret(kw.type, kw.style, word)
                 } else if (isVariable.test(word)) {
                     return ret("variable", "variable", word)
+                } else if (/\d/.test(ch)) { // Numero \d es lo mismo que [0-9]
+                    return ret("number", "number");
+                } else {
+                    console.log("caracter no valido", ch, stream)
+                    return ret("warning", "warning", stream.current());
                 }
+            } else {
+                stream.skipToEnd();
+                console.log("caracter no valido", ch, stream)
+                return ret("error", "error", stream.current());
             }
         }
 

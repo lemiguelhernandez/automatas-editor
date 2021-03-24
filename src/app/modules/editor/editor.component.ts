@@ -12,7 +12,8 @@ export class EditorComponent implements OnInit {
   options = {
     lineNumbers: true,
     theme: 'material',
-    mode: 'custom'
+    mode: 'custom',
+    lint: true
   };
 
   constructor() { }
