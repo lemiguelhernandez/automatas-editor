@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "Publish changes"
+echo "compile"
+# cd ../ && yarn build:prod
+
+echo "Eliminar contenido docs"
+rm -rf docs/
+
+echo "Actualizar nuevo contenido"
+cp /dist/* /docs/
+
+echo "git push"
+git add .
+git commit -m "automatizacion de publicación"
+git push
