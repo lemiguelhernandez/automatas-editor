@@ -23,6 +23,7 @@ export class EditorComponent implements OnInit {
     declare a,b1 entero;
     declare x real;
     declare i real;
+    declare x1234567890123456 real;
     recibe(x);
     a = 5;
     b = 2;
