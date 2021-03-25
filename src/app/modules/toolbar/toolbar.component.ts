@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ToolbarComponent implements OnInit {
 
+  visibleInfo = false;
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  showSideBar() {
+    this.visibleInfo = true;
   }
 
 }

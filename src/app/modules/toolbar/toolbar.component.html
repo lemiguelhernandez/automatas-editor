@@ -5,7 +5,15 @@
     <a title="Compilar">
         <div class="compile-icon"></div>
     </a>
-    <a title="Información">
+    <a title="Información" (click)="showSideBar()" style="cursor: pointer;">
         <div class="info-icon"></div>
     </a>
 </div>
+
+<p-sidebar [(visible)]="visibleInfo" position="top" [baseZIndex]="99999999999">
+    <h1 style="font-weight:normal">Integrantes:</h1>
+    <h3>RICARDO BARBOSA RODRIGUEZ</h3>
+    <h3>LUIS MIGUEL HERNÁNDEZ PÉREZ</h3>
+    <h3>CRISTIAN ESTUPIÑAN MIRANDA</h3>
+    <h3>CLEIDER RICARDO BARBOZA</h3>
+</p-sidebar>

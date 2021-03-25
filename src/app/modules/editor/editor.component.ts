@@ -30,7 +30,7 @@ export class EditorComponent implements OnInit {
     b = 2;
     si x >= (b + c1) entonces
       # a = a +1
-      envia ("HOLA MUNDO");
+      envia (“HOLA MUNDO”);
     sino
       envia ("ESTO ES UNA PRUEBA");
     finsi;
