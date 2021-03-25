@@ -130,6 +130,7 @@
   
   
   .cm-s-material .cm-error {
+    color: red;
     background-image:
     linear-gradient(45deg, transparent 65%, #FF5370 80%, transparent 90%),
     linear-gradient(135deg, transparent 5%, #FF5370 15%, transparent 25%),
@@ -141,6 +142,7 @@
   }
 
   .cm-s-material .cm-warning {
+    color: yellow;
     background-image:
     linear-gradient(45deg, transparent 65%, #ECD41E 80%, transparent 90%),
     linear-gradient(135deg, transparent 5%, #ECD41E 15%, transparent 25%),

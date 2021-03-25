@@ -68,7 +68,7 @@ export const apply = (CodeMirror) => {
 
                 if (stream.string) {
                     const linea = stream.string.trim();
-                    if (linea.startsWith("declare") && !isSuccessDeclare.test(linea)) {
+                    if (linea.includes("declare") && !isSuccessDeclare.test(linea)) {
                         stream.skipToEnd();
                         return ret("warning", "warning", stream.current());
                     }
