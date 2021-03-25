@@ -5,6 +5,7 @@ export const apply = (CodeMirror) => {
         // Indentificar caracteres - \w es igual a [a-zA-Z0-9_]
         var wordRE = parserConfig.wordCharacters || /\w+/;
         const isVariable = /^[a-zA-Z][a-zA-Z0-9_]{0,14}$/;
+        const isSuccessDeclare = /declare\s[a-zA-Z][a-zA-Z0-9_]*(\s|)*(,|)(\s|)*([a-zA-Z][a-zA-Z0-9_]*)*\s+(entero|real|cadena)(\s|)*;/;
 
         var keywords = function () {
             function kw(type) { return { type: type, style: "keyword" }; }
@@ -63,7 +64,16 @@ export const apply = (CodeMirror) => {
                 return ret("operator", "operator", stream.current());
             } else if (wordRE.test(ch)) { // Letras
                 stream.eatWhile(wordRE);
-                var word = stream.current()
+                var word = stream.current();
+
+                if (stream.string) {
+                    const linea = stream.string.trim();
+                    if (linea.startsWith("declare") && !isSuccessDeclare.test(linea)) {
+                        stream.skipToEnd();
+                        return ret("warning", "warning", stream.current());
+                    }
+                }
+
                 if (keywords.propertyIsEnumerable(word)) { // Palabras reservadas
                     var kw = keywords[word]
                     return ret(kw.type, kw.style, word)
@@ -72,12 +82,10 @@ export const apply = (CodeMirror) => {
                 } else if (/\d/.test(ch)) { // Numero \d es lo mismo que [0-9]
                     return ret("number", "number");
                 } else {
-                    console.log("caracter no valido", ch, stream)
                     return ret("warning", "warning", stream.current());
                 }
             } else {
-                stream.skipToEnd();
-                console.log("caracter no valido", ch, stream)
+                // stream.skipToEnd();
                 return ret("error", "error", stream.current());
             }
         }
